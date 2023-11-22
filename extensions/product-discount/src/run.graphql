@@ -2,10 +2,21 @@ query RunInput {
   cart {
     lines {
       quantity
+      cost {
+        subtotalAmount {
+          amount
+        }
+      }
       merchandise {
         __typename
         ...on ProductVariant {
             id
+            product {
+              title
+              metafield(namespace: "custom", key: "box_price"){
+                value
+              }
+            }
         }
       }
     }

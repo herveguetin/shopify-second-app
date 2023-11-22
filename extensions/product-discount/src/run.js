@@ -23,42 +23,51 @@ const EMPTY_DISCOUNT = {
 * @returns {FunctionRunResult}
 */
 export function run(input) {
-  const targets = input.cart.lines
-  // Only include cart lines with a quantity of two or more
-  // and a targetable product variant
-  .filter(line => line.quantity >= 2 &&
-    line.merchandise.__typename == "ProductVariant")
-  .map(line => {
+  const BOX_SIZE = 6
+  const lines = input.cart.lines
+  const linesWithBoxes = lines.filter((line) => {
     const variant = /** @type {ProductVariant} */ (line.merchandise);
-    return /** @type {Target} */ ({
-      // Use the variant ID to create a discount target
+    const value = JSON.parse(variant.product.metafield?.value ?? '{}')
+    return value.amount !== undefined && line.quantity >= BOX_SIZE
+  })
+
+  const discounts = linesWithBoxes.map(line => {
+    const variant = /** @type {ProductVariant} */ (line.merchandise);
+    const boxPrice = JSON.parse(variant.product.metafield?.value ?? '{}')
+    const nbOfBoxes = Math.floor(line.quantity / BOX_SIZE)
+    const boxesPrice = nbOfBoxes * parseFloat(boxPrice.amount)
+    const nbOfremainingBottles = line.quantity - nbOfBoxes * BOX_SIZE
+    const singleBottleUnitPrice = line.cost.subtotalAmount.amount / line.quantity
+    const remainingBottlesPrice = nbOfremainingBottles * singleBottleUnitPrice
+    const linePrice = boxesPrice + remainingBottlesPrice
+    const discountAmount = line.cost.subtotalAmount.amount - linePrice 
+
+    const targets = [{
       productVariant: {
         id: variant.id
       }
+    }]
+    return {
+      targets,
+      value: {
+        fixedAmount: {
+          amount: discountAmount
+        }
+      },
+      message: nbOfBoxes + " box(es) + " + nbOfremainingBottles + " bottle(s)"
+    }
     });
-  });
 
-  if (!targets.length) {
-    // You can use STDERR for debug logs in your function
+
+  console.log(JSON.stringify(discounts))
+
+  if (!discounts.length) {
     console.error("No cart lines qualify for volume discount.");
     return EMPTY_DISCOUNT;
   }
 
-  // The @shopify/shopify_function package applies JSON.stringify() to your function result
-  // and writes it to STDOUT
   return {
-    discounts: [
-      {
-        // Apply the discount to the collected targets
-        targets,
-        // Define a percentage-based discount
-        value: {
-          percentage: {
-            value: "10.0"
-          }
-        }
-      }
-    ],
-    discountApplicationStrategy: DiscountApplicationStrategy.First
+    discounts: discounts,
+    discountApplicationStrategy: DiscountApplicationStrategy.All
   };
 };
