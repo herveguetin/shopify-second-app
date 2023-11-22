@@ -1,0 +1,28 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "second-app"
+client_id = "356cb65131976ad4a95a61d99c4b9dba"
+application_url = "https://checklist-water-india-bath.trycloudflare.com"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://checklist-water-india-bath.trycloudflare.com/auth/callback",
+  "https://checklist-water-india-bath.trycloudflare.com/auth/shopify/callback",
+  "https://checklist-water-india-bath.trycloudflare.com/api/auth/callback",
+  "https://checklist-water-india-bath.trycloudflare.com/.shopify/graphiql/auth/callback"
+]
+
+[webhooks]
+api_version = "2023-10"
+
+[pos]
+embedded = false
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "lulugreen.myshopify.com"
