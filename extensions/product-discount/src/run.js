@@ -23,20 +23,19 @@ const EMPTY_DISCOUNT = {
 * @returns {FunctionRunResult}
 */
 export function run(input) {
-  const BOX_SIZE = 6
   const lines = input.cart.lines
   const linesWithBoxes = lines.filter((line) => {
     const variant = /** @type {ProductVariant} */ (line.merchandise);
-    const value = JSON.parse(variant.product.metafield?.value ?? '{}')
-    return value.amount !== undefined && line.quantity >= BOX_SIZE
+    const boxConfig = JSON.parse(line.attribute?.value ?? '{}')
+    return Object.keys(boxConfig).length > 0
   })
 
   const discounts = linesWithBoxes.map(line => {
     const variant = /** @type {ProductVariant} */ (line.merchandise);
-    const boxPrice = JSON.parse(variant.product.metafield?.value ?? '{}')
-    const nbOfBoxes = Math.floor(line.quantity / BOX_SIZE)
-    const boxesPrice = nbOfBoxes * parseFloat(boxPrice.amount)
-    const nbOfremainingBottles = line.quantity - nbOfBoxes * BOX_SIZE
+    const boxConfig = JSON.parse(line.attribute?.value ?? '{}')
+    const nbOfBoxes = Math.floor(line.quantity / boxConfig.items_per_box)
+    const boxesPrice = nbOfBoxes * parseFloat(boxConfig.box_price.amount)
+    const nbOfremainingBottles = line.quantity - nbOfBoxes * boxConfig.items_per_box
     const singleBottleUnitPrice = line.cost.subtotalAmount.amount / line.quantity
     const remainingBottlesPrice = nbOfremainingBottles * singleBottleUnitPrice
     const linePrice = boxesPrice + remainingBottlesPrice
@@ -57,9 +56,6 @@ export function run(input) {
       message: nbOfBoxes + " box(es) + " + nbOfremainingBottles + " bottle(s)"
     }
     });
-
-
-  console.log(JSON.stringify(discounts))
 
   if (!discounts.length) {
     console.error("No cart lines qualify for volume discount.");
