@@ -7,7 +7,7 @@ query RunInput {
           amount
         }
       }
-      attribute(key: "box") {
+      attribute(key: "_box") {
         value
       }
       merchandise {

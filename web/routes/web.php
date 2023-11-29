@@ -143,3 +143,7 @@ Route::post('/api/webhooks', function (Request $request) {
         return response()->json(['message' => "Got an exception when handling '$topic' webhook"], 500);
     }
 });
+
+Route::post('/cart', function (Request $request) {
+    return response()->json($request->post());
+})->middleware('shopify.proxysignature');
