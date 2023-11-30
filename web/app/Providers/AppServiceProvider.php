@@ -7,10 +7,12 @@ use App\Lib\Handlers\AppUninstalled;
 use App\Lib\Handlers\Privacy\CustomersDataRequest;
 use App\Lib\Handlers\Privacy\CustomersRedact;
 use App\Lib\Handlers\Privacy\ShopRedact;
+use App\Services\Cart;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
 use Shopify\Context;
 use Shopify\ApiVersion;
+use Shopify\Exception\MissingArgumentException;
 use Shopify\Webhooks\Registry;
 use Shopify\Webhooks\Topics;
 
@@ -23,14 +25,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind('cart', function () {
+            return new Cart();
+        });
     }
 
     /**
      * Bootstrap any application services.
      *
      * @return void
-     * @throws \Shopify\Exception\MissingArgumentException
+     * @throws MissingArgumentException
      */
     public function boot()
     {

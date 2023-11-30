@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\ShopifyProductCreatorException;
+use App\Facades\Cart;
 use App\Lib\AuthRedirection;
 use App\Lib\EnsureBilling;
 use App\Lib\ProductCreator;
@@ -145,5 +146,5 @@ Route::post('/api/webhooks', function (Request $request) {
 });
 
 Route::post('/cart', function (Request $request) {
-    return response()->json($request->post());
+    return response()->json(Cart::update($request->post()));
 })->middleware('shopify.proxysignature');
