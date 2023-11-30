@@ -6,7 +6,7 @@
 namespace App\Services;
 
 use App\Services\Cart\Decorators\DecoratorInterface;
-use App\Services\Cart\Decorators\TotalPriceDecorator;
+use App\Services\Cart\Decorators\BoxesDecorator;
 use Exception;
 use StdClass;
 
@@ -15,7 +15,7 @@ class Cart
     private StdClass $cart;
 
     private array $decorators = [
-        TotalPriceDecorator::class
+        BoxesDecorator::class
     ];
 
     public function update(array $cart): array
