@@ -40,6 +40,7 @@ class BoxesDecorator implements DecoratorInterface
     {
         $preparedLine = $this->prepareLine($line);
         $boxData = $preparedLine['properties']['_box_data'];
+        $line['properties']['_box_data'] = $boxData;
         $line['discounted_price'] = $boxData['line_price'] / $preparedLine['quantity'];
         $line['final_line_price'] = $boxData['line_price'];
         $line['line_level_total_discount'] = $boxData['discount_amount'];
