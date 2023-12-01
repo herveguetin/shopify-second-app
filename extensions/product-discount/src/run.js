@@ -26,8 +26,7 @@ export function run(input) {
   const lines = input.cart.lines
   const linesWithBoxes = lines.filter((line) => {
     const variant = /** @type {ProductVariant} */ (line.merchandise);
-    const boxConfig = JSON.parse(line.attribute?.value ?? '{}')
-    return Object.keys(boxConfig).length > 0
+    return (line.attribute?.value !== 'null')
   })
 
   const discounts = linesWithBoxes.map(line => {
