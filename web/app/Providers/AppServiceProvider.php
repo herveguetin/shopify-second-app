@@ -8,6 +8,7 @@ use App\Lib\Handlers\Privacy\CustomersDataRequest;
 use App\Lib\Handlers\Privacy\CustomersRedact;
 use App\Lib\Handlers\Privacy\ShopRedact;
 use App\Services\Algolia;
+use App\Services\Algolia\Client as AlgoliaClient;
 use App\Services\Cart;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
@@ -31,6 +32,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind('algolia', function () {
             return new Algolia();
+        });
+        $this->app->singleton(AlgoliaClient::class, function () {
+            return new AlgoliaClient();
         });
     }
 
