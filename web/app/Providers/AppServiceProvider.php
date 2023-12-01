@@ -7,6 +7,7 @@ use App\Lib\Handlers\AppUninstalled;
 use App\Lib\Handlers\Privacy\CustomersDataRequest;
 use App\Lib\Handlers\Privacy\CustomersRedact;
 use App\Lib\Handlers\Privacy\ShopRedact;
+use App\Services\Algolia;
 use App\Services\Cart;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
@@ -27,6 +28,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind('cart', function () {
             return new Cart();
+        });
+        $this->app->bind('algolia', function () {
+            return new Algolia();
         });
     }
 
