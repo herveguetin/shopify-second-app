@@ -5,11 +5,10 @@
 
 namespace App\Services\Algolia\Indexers;
 
-use App\Services\Algolia\Index;
-
 class Products extends IndexerAbstract
 {
-    protected ?string $indexerCode = 'products';
+    protected string $indexerCode = 'products';
+
     protected function run(): void
     {
         $record = ["objectID" => 1, "name" => "new rercord again"];

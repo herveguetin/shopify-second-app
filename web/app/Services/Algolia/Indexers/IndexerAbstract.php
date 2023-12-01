@@ -12,7 +12,7 @@ use Exception;
 abstract class IndexerAbstract implements IndexerInterface
 {
 
-    protected ?string $indexerCode = null;
+    protected string $indexerCode = '';
     protected SearchIndex $index;
 
     public function reindex(): void
@@ -22,7 +22,7 @@ abstract class IndexerAbstract implements IndexerInterface
 
     private function code(): string
     {
-        if (is_null($this->indexerCode)) {
+        if ($this->indexerCode === '') {
             throw new Exception('Please define an indexer code.');
         }
         return $this->indexerCode;
