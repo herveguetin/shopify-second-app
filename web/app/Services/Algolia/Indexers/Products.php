@@ -7,7 +7,7 @@ namespace App\Services\Algolia\Indexers;
 
 class Products extends IndexerAbstract
 {
-    protected string $indexerCode = 'products';
+    public const INDEXER_CODE = 'products';
 
     protected function run(): void
     {

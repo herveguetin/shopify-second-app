@@ -11,8 +11,8 @@ use Exception;
 
 abstract class IndexerAbstract implements IndexerInterface
 {
+    public const INDEXER_CODE = '';
 
-    protected string $indexerCode = '';
     protected SearchIndex $index;
 
     public function reindex(): void
@@ -22,10 +22,10 @@ abstract class IndexerAbstract implements IndexerInterface
 
     private function code(): string
     {
-        if ($this->indexerCode === '') {
+        if (static::INDEXER_CODE === '') {
             throw new Exception('Please define an indexer code.');
         }
-        return $this->indexerCode;
+        return static::INDEXER_CODE;
     }
 
     protected function index(): SearchIndex

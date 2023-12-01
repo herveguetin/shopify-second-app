@@ -9,7 +9,7 @@ namespace App\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \App\Services\Algolia reindex
+ * @method static \App\Services\Algolia reindex(array $indexers = [])
  * @method static \App\Services\Algolia reindexProducts
  *
  * @see \App\Services\Algolia

@@ -11,25 +11,29 @@ use App\Services\Algolia\Indexers\Products;
 class Algolia
 {
     private const INDEXERS = [
-        Products::class
+        Products::INDEXER_CODE => Products::class
     ];
 
 
-    public function reindex(): void
+    public function reindex(array $indexers = []): void
     {
         array_map(function (IndexerInterface $indexer) {
             $indexer->reindex();
             var_dump($indexer->sample());
-        }, $this->indexers());
+        }, $this->indexers($indexers));
     }
 
     /**
      * @return IndexerInterface[]
      */
-    private function indexers(): array
+    private function indexers(array $indexers = []): array
     {
+        $usedIndexers = empty($indexers) ? self::INDEXERS
+            : array_map(function ($indexerCode) {
+                return self::INDEXERS[$indexerCode];
+            }, $indexers);
         return array_map(function (string $indexerClassName) {
             return new $indexerClassName();
-        }, self::INDEXERS);
+        }, $usedIndexers);
     }
 }
