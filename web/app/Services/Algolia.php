@@ -28,10 +28,9 @@ class Algolia
      */
     private function indexers(array $indexers = []): array
     {
-        $usedIndexers = empty($indexers) ? self::INDEXERS
-            : array_map(function ($indexerCode) {
-                return self::INDEXERS[$indexerCode];
-            }, $indexers);
+        $usedIndexers = empty($indexers) ? self::INDEXERS : array_map(function ($indexerCode) {
+            return self::INDEXERS[$indexerCode];
+        }, $indexers);
         return array_map(function (string $indexerClassName) {
             return new $indexerClassName();
         }, $usedIndexers);
