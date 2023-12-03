@@ -10,11 +10,11 @@ use App\Lib\Handlers\Privacy\ShopRedact;
 use App\Services\Algolia;
 use App\Services\Algolia\Client as AlgoliaClient;
 use App\Services\Cart;
-use App\Services\ShopifyConfig;
-use Illuminate\Support\ServiceProvider;
+use App\Services\Shopify\Config;
 use Illuminate\Support\Facades\URL;
-use Shopify\Context;
+use Illuminate\Support\ServiceProvider;
 use Shopify\ApiVersion;
+use Shopify\Context;
 use Shopify\Exception\MissingArgumentException;
 use Shopify\Webhooks\Registry;
 use Shopify\Webhooks\Topics;
@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        ShopifyConfig::load();
+        Config::load();
         $this->bootShopify();
     }
 

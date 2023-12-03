@@ -3,14 +3,14 @@
  * @author Hervé Guétin <www.linkedin.com/in/herveguetin>
  */
 
-namespace App\Services;
+namespace App\Services\Shopify;
 
 use Illuminate\Support\Env;
 use SimpleXMLElement;
 use Spatie\ArrayToXml\ArrayToXml;
 use Yosymfony\Toml\Toml;
 
-class ShopifyConfig
+class Config
 {
     private const SHOPIFY_KEY_PREFIX = 'shopify::';
     protected static array $mapping = [

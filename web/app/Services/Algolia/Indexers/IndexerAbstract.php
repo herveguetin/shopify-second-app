@@ -9,11 +9,9 @@ use Algolia\AlgoliaSearch\SearchIndex;
 use App\Services\Algolia\Index;
 use App\Services\Algolia\Indexers\Queue\Job;
 use App\Services\Algolia\Indexers\Queue\JobConfig;
+use App\Services\Shopify\Rest;
 use Exception;
 use Shopify\Auth\Session;
-use Shopify\Clients\Rest;
-use Shopify\Clients\RestResponse;
-use Shopify\Utils;
 
 abstract class IndexerAbstract implements IndexerInterface
 {
@@ -64,37 +62,7 @@ abstract class IndexerAbstract implements IndexerInterface
 
     protected function requestObjects(?string $pageUrl = null): void
     {
-        $page = $this->requestPage(path: static::API_PATH, pageUrl: $pageUrl);
-        $responseBody = $page->getDecodedBody();
-        $newObjects = static::API_OBJECTS_RESPONSE_KEY !== '' ? $responseBody[static::API_OBJECTS_RESPONSE_KEY] : [$responseBody];
-        $this->objects = array_merge($this->objects, $newObjects);
-        if ($page->getPageInfo()->getNextPageUrl() !== null) {
-            $this->requestObjects($page->getPageInfo()->getNextPageUrl());
-        }
-    }
-
-    protected function requestPage(string $path, array $query = [], ?string $pageUrl = null): RestResponse
-    {
-        $pageInfo = null;
-        if (!is_null($pageUrl)) {
-            $parts = parse_url($pageUrl);
-            parse_str($parts['query'], $query);
-            $pageInfo = $query['page_info'];
-        }
-        /** @var RestResponse $response */
-        $response = $this->shopify()->get(
-            path: $path,
-            query: array_merge($query, ['limit' => static::PAGE_SIZE, 'page_info' => $pageInfo])
-        );
-        return $response;
-    }
-
-    protected function shopify(): Rest
-    {
-        if (is_null($this->session)) {
-            $this->session = Utils::loadOfflineSession(env('SHOPIFY_SHOP'));
-        }
-        return new Rest($this->session->getShop(), $this->session->getAccessToken());
+        $this->objects = (new Rest(static::API_PATH))->objects(static::API_OBJECTS_RESPONSE_KEY);
     }
 
     protected function indexObjects(): void
