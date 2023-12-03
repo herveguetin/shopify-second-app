@@ -19,7 +19,6 @@ class Algolia
     {
         array_map(function (IndexerInterface $indexer) {
             $indexer->reindex();
-            var_dump($indexer->sample());
         }, $this->indexers($indexers));
     }
 

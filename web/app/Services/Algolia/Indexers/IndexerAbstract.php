@@ -7,6 +7,8 @@ namespace App\Services\Algolia\Indexers;
 
 use Algolia\AlgoliaSearch\SearchIndex;
 use App\Services\Algolia\Index;
+use App\Services\Algolia\Indexers\Queue\Job;
+use App\Services\Algolia\Indexers\Queue\JobConfig;
 use Exception;
 use Shopify\Auth\Session;
 use Shopify\Clients\Rest;
@@ -21,9 +23,9 @@ abstract class IndexerAbstract implements IndexerInterface
     protected const PAGE_SIZE = 5;
 
     protected SearchIndex $index;
+    protected ?array $objects = [];
     private ?Session $session = null;
     private bool $canClear = true;
-    protected ?array $objects = [];
 
     public function reindex(): void
     {
@@ -71,16 +73,6 @@ abstract class IndexerAbstract implements IndexerInterface
         }
     }
 
-    protected function indexObjects(): void
-    {
-        $this->index()->saveObjects($this->objects, ['objectIDKey' => 'id'])->wait();
-    }
-
-    public function sample(): array
-    {
-        return $this->index()->browseObjects()->current();
-    }
-
     protected function requestPage(string $path, array $query = [], ?string $pageUrl = null): RestResponse
     {
         $pageInfo = null;
@@ -103,5 +95,18 @@ abstract class IndexerAbstract implements IndexerInterface
             $this->session = Utils::loadOfflineSession(env('SHOPIFY_SHOP'));
         }
         return new Rest($this->session->getShop(), $this->session->getAccessToken());
+    }
+
+    protected function indexObjects(): void
+    {
+        Job::dispatch(JobConfig::encode([
+            'indexer_code' => $this->code(),
+            'objects' => $this->objects,
+        ]));
+    }
+
+    public function sample(): array
+    {
+        return $this->index()->browseObjects()->current();
     }
 }
