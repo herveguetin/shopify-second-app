@@ -10,6 +10,7 @@ use App\Lib\Handlers\Privacy\ShopRedact;
 use App\Services\Algolia;
 use App\Services\Algolia\Client as AlgoliaClient;
 use App\Services\Cart;
+use App\Services\ShopifyConfig;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
 use Shopify\Context;
@@ -45,6 +46,18 @@ class AppServiceProvider extends ServiceProvider
      * @throws MissingArgumentException
      */
     public function boot()
+    {
+        ShopifyConfig::load();
+        $this->bootShopify();
+    }
+
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     * @throws MissingArgumentException
+     */
+    public function bootShopify()
     {
         $host = str_replace('https://', '', env('HOST', 'not_defined'));
 
