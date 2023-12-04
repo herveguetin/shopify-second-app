@@ -39,7 +39,7 @@ class Rest
         $responseBody = $page->getDecodedBody();
         $newObjects = $this->apiObjectsResponseKey !== '' ? $responseBody[$this->apiObjectsResponseKey] : [$responseBody];
         $this->objects = array_merge($this->objects, $newObjects);
-        if ($page->getPageInfo()->getNextPageUrl() !== null) {
+        if ($this->hasNextPage($page)) {
             $this->requestObjects($page->getPageInfo()->getNextPageUrl());
         }
     }
@@ -66,5 +66,16 @@ class Rest
             $this->session = Utils::loadOfflineSession(env('SHOPIFY_SHOP'));
         }
         return new ShopifyRest($this->session->getShop(), $this->session->getAccessToken());
+    }
+
+    private function hasNextPage(RestResponse $page): bool
+    {
+        if (is_null($page->getPageInfo())) {
+            return false;
+        }
+        if (is_null($page->getPageInfo()->getNextPageUrl())) {
+            return false;
+        }
+        return true;
     }
 }

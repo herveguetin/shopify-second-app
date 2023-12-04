@@ -5,13 +5,15 @@
 
 namespace App\Services;
 
+use App\Services\Algolia\Indexers\Collections;
 use App\Services\Algolia\Indexers\IndexerInterface;
 use App\Services\Algolia\Indexers\Products;
 
 class Algolia
 {
     private const INDEXERS = [
-        Products::INDEXER_CODE => Products::class
+        Products::INDEXER_CODE => Products::class,
+        Collections::INDEXER_CODE => Collections::class,
     ];
 
 

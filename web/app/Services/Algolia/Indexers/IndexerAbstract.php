@@ -60,17 +60,19 @@ abstract class IndexerAbstract implements IndexerInterface
         return static::INDEXER_CODE;
     }
 
-    protected function requestObjects(?string $pageUrl = null): void
+    protected function requestObjects(): void
     {
         $this->objects = (new Rest(static::API_PATH))->objects(static::API_OBJECTS_RESPONSE_KEY);
     }
 
     protected function indexObjects(): void
     {
-        Job::dispatch(JobConfig::encode([
-            'indexer_code' => $this->code(),
-            'objects' => $this->objects,
-        ]));
+        foreach ($this->objects as $object) {
+            Job::dispatch(JobConfig::encode([
+                'indexer_code' => $this->code(),
+                'objects' => [$object],
+            ]));
+        }
     }
 
     public function sample(): array

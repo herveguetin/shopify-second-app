@@ -11,7 +11,7 @@ namespace App\Services\Algolia\Indexers\Queue;
  */
 class JobConfig
 {
-    public static array $allowedKeys = [
+    public static array $properties = [
         'indexer_code',
         'objects'
     ];
@@ -27,7 +27,7 @@ class JobConfig
     public static function encode(array $config): string
     {
         $sanitizedConfig = array_filter($config, function ($v, $k) {
-            return in_array($k, JobConfig::$allowedKeys);
+            return in_array($k, JobConfig::$properties);
         }, ARRAY_FILTER_USE_BOTH);
 
         return json_encode($sanitizedConfig);
