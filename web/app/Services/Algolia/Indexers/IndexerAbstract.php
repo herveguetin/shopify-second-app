@@ -6,23 +6,20 @@
 namespace App\Services\Algolia\Indexers;
 
 use Algolia\AlgoliaSearch\SearchIndex;
-use App\Services\Algolia\Index;
+use App\Services\Algolia\Framework\Index;
 use App\Services\Algolia\Indexers\Queue\Job;
 use App\Services\Algolia\Indexers\Queue\JobConfig;
 use App\Services\Shopify\Rest;
 use Exception;
-use Shopify\Auth\Session;
 
 abstract class IndexerAbstract implements IndexerInterface
 {
-    public const INDEXER_CODE = '';
+    public const INDEX_CODE = '';
     protected const API_PATH = '';
     protected const API_OBJECTS_RESPONSE_KEY = '';
-    protected const PAGE_SIZE = 5;
 
     protected SearchIndex $index;
     protected ?array $objects = [];
-    private ?Session $session = null;
     private bool $canClear = true;
 
     public function reindex(): void
@@ -54,10 +51,10 @@ abstract class IndexerAbstract implements IndexerInterface
 
     protected function code(): string
     {
-        if (static::INDEXER_CODE === '') {
-            throw new Exception('Please define an indexer code.');
+        if (static::INDEX_CODE === '') {
+            throw new Exception('Please define an index code.');
         }
-        return static::INDEXER_CODE;
+        return static::INDEX_CODE;
     }
 
     protected function requestObjects(): void

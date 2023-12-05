@@ -2,8 +2,7 @@
 
 namespace App\Services\Algolia\Indexers\Queue;
 
-use Algolia\AlgoliaSearch\SearchIndex;
-use App\Services\Algolia\Index;
+use App\Services\Algolia\Framework\Index;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

@@ -3,7 +3,7 @@
  * @author Hervé Guétin <www.linkedin.com/in/herveguetin>
  */
 
-namespace App\Services\Algolia;
+namespace App\Services\Algolia\Framework;
 
 use Algolia\AlgoliaSearch\SearchClient;
 

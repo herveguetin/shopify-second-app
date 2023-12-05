@@ -8,7 +8,7 @@ use App\Lib\Handlers\Privacy\CustomersDataRequest;
 use App\Lib\Handlers\Privacy\CustomersRedact;
 use App\Lib\Handlers\Privacy\ShopRedact;
 use App\Services\Algolia;
-use App\Services\Algolia\Client as AlgoliaClient;
+use App\Services\Algolia\Framework\Client as AlgoliaClient;
 use App\Services\Cart;
 use App\Services\Shopify\Config;
 use Illuminate\Support\Facades\URL;

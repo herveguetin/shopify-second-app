@@ -5,35 +5,17 @@
 
 namespace App\Services;
 
-use App\Services\Algolia\Indexers\Collections;
-use App\Services\Algolia\Indexers\IndexerInterface;
-use App\Services\Algolia\Indexers\Products;
+use App\Services\Algolia\Index\IndexInterface;
+use App\Services\Algolia\Index\IndexRepository;
 
 class Algolia
 {
-    private const INDEXERS = [
-        Products::INDEXER_CODE => Products::class,
-        Collections::INDEXER_CODE => Collections::class,
-    ];
-
-
-    public function reindex(array $indexers = []): void
+    public function reindex(array $indices = []): void
     {
-        array_map(function (IndexerInterface $indexer) {
-            $indexer->reindex();
-        }, $this->indexers($indexers));
-    }
-
-    /**
-     * @return IndexerInterface[]
-     */
-    private function indexers(array $indexers = []): array
-    {
-        $usedIndexers = empty($indexers) ? self::INDEXERS : array_map(function ($indexerCode) {
-            return self::INDEXERS[$indexerCode];
-        }, $indexers);
-        return array_map(function (string $indexerClassName) {
-            return new $indexerClassName();
-        }, $usedIndexers);
+        array_map(function (IndexInterface $index) use ($indices) {
+            if (empty($indices) || in_array($index->code(), $indices)) {
+                $index->reindex();
+            }
+        }, IndexRepository::all());
     }
 }

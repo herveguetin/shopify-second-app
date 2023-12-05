@@ -9,7 +9,7 @@ use App\Services\Shopify\Rest;
 
 class Collections extends IndexerAbstract
 {
-    public const INDEXER_CODE = 'collections';
+    public const INDEX_CODE = 'collections';
 
     protected function requestObjects(): void
     {
