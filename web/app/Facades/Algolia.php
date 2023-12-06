@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static \App\Services\Algolia reindex(array $indexers = [])
  * @method static \App\Services\Algolia reindexProducts
+ * @method static \App\Services\Algolia setup
  *
  * @see \App\Services\Algolia
  */

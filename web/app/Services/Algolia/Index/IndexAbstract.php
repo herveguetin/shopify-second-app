@@ -7,11 +7,13 @@ namespace App\Services\Algolia\Index;
 
 use App\Services\Algolia\Indexers\IndexerInterface;
 use App\Services\Algolia\Indexers\IndexerRepository;
+use App\Services\Algolia\Settings\Setup;
 use Exception;
 
 class IndexAbstract implements IndexInterface
 {
     public const INDEX_CODE = '';
+
     public function reindex(): void
     {
         $this->getIndexers();
@@ -34,5 +36,10 @@ class IndexAbstract implements IndexInterface
             throw new Exception('Please define an index code.');
         }
         return static::INDEX_CODE;
+    }
+
+    public function setup(): void
+    {
+        Setup::push($this);
     }
 }
