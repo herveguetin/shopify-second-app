@@ -8,7 +8,6 @@ namespace App\Services\Shopify;
 use Shopify\Auth\Session;
 use Shopify\Clients\Rest as ShopifyRest;
 use Shopify\Clients\RestResponse;
-use Shopify\Utils;
 
 class Rest
 {
@@ -63,7 +62,7 @@ class Rest
     protected function shopify(): ShopifyRest
     {
         if (is_null($this->session)) {
-            $this->session = Utils::loadOfflineSession(env('SHOPIFY_SHOP'));
+            $this->session = Rest\Session::offline();
         }
         return new ShopifyRest($this->session->getShop(), $this->session->getAccessToken());
     }
