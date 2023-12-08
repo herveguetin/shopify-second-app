@@ -5,6 +5,7 @@
 
 namespace App\Providers;
 
+use App\Lib\Skafer\Support\Path;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Finder\Finder;
 
@@ -17,5 +18,10 @@ class SkaferServiceProvider extends ServiceProvider
         foreach (Finder::create()->files()->name('*.php')->in(app()->basePath(self::LIB_PATH)) as $file) {
             include_once $file->getRealPath();
         }
+    }
+
+    public function boot()
+    {
+        Path::set(app()->basePath('app/Services/'));
     }
 }

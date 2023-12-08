@@ -17,7 +17,7 @@ class IndexerRepository implements RepositoryInterface
     ];
     private static ?Repository $repository = null;
 
-    public static function get($key, $default = null): IndexerInterface
+    public static function get($key): IndexerInterface
     {
         return current(array_filter(static::all(), function (IndexerInterface $index) use ($key) {
             return $index->code() === $key;

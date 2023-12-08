@@ -13,9 +13,9 @@ class DecoratorRepository
     /**
      * @return DecoratorInterface[]
      */
-    public static function all(string $namespace, string $interface): array
+    public static function all(string $namespace): array
     {
-        $repository = RepositoryFactory::create(Loader::classNames($namespace), $interface);
+        $repository = RepositoryFactory::create(Loader::classNames($namespace), DecoratorInterface::class);
         return $repository->all();
     }
 }

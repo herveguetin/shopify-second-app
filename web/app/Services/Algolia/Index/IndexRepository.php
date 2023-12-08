@@ -25,7 +25,7 @@ class IndexRepository implements RepositoryInterface
         return static::$repository;
     }
 
-    public static function get($key, $default = null): IndexInterface
+    public static function get($key): IndexInterface
     {
         return current(array_filter(static::all(), function (IndexInterface $index) use ($key) {
             return $index->code() === $key;

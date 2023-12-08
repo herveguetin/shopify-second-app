@@ -5,40 +5,36 @@
 
 namespace Skafer\Class;
 
-use Symfony\Component\Finder\Finder;
+use App\Lib\Skafer\Support\File;
 
 class Loader
 {
-    private const BASE_PATH = '/app/Services/';
+
+    private static array $loadedClasses = [];
 
     public static function classNames(string $namespace): array
     {
-        static::bindNamespace($namespace);
-        return array_filter(get_declared_classes(), function ($className) use ($namespace) {
-            return (str_contains($className, $namespace));
-        });
+        if (!in_array($namespace, array_keys(static::$loadedClasses))) {
+            static::include($namespace);
+            static::$loadedClasses[$namespace] = static::namespaceClasses($namespace);
+        }
+        return static::$loadedClasses[$namespace];
     }
 
-    public static function bindNamespace(string $namespace): void
+    private static function include(string $namespace): void
     {
-        $containerKey = strtolower(str_replace('\\', '_', $namespace));
-        if (!app()->has($containerKey)) {
-            $files = static::loadFiles($namespace);
-            foreach ($files as $file) {
-                include $file;
+        foreach (File::files(str_replace('\\', '/', $namespace)) as $file) {
+            include_once $file->getRealPath();
+        }
+    }
+
+    public static function namespaceClasses($namespace): array
+    {
+        return array_filter(
+            get_declared_classes(),
+            function ($className) use ($namespace) {
+                return (str_contains($className, $namespace));
             }
-            app()->bind($containerKey);
-        }
-    }
-
-    private static function loadFiles(string $namespace): array
-    {
-        $files = [];
-        $configPath = app()->basePath(self::BASE_PATH . str_replace('\\', '/', $namespace));
-        foreach (Finder::create()->files()->name('*.php')->in($configPath) as $file) {
-            $files[strtolower(basename($file->getRealPath(), '.php'))] = $file->getRealPath();
-        }
-        ksort($files, SORT_NATURAL);
-        return $files;
+        );
     }
 }

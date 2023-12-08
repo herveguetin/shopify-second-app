@@ -68,7 +68,7 @@ class IndexerBuilder implements IndexerInterface
         if (static::DECORATOR_NAMESPACE !== '') {
             array_map(function (DecoratorInterface $decorator) {
                 $decorator->decorate($this->objects);
-            }, DecoratorRepository::all(static::DECORATOR_NAMESPACE, DecoratorInterface::class));
+            }, DecoratorRepository::all(static::DECORATOR_NAMESPACE));
         }
     }
 

@@ -5,35 +5,30 @@
 
 namespace App\Services\Algolia\App;
 
+use App\Lib\Skafer\Support\File;
 use Illuminate\Config\Repository;
-use Symfony\Component\Finder\Finder;
 
 class Config
 {
+    private const DIR_URI = 'Algolia/config';
+    private static ?Repository $config = null;
+
     public static function get(?string $path = null, $default = null): mixed
     {
-        $config = new static();
-        return $config->repository()->get($path, $default);
+        if (is_null(static::$config)) {
+            static::$config = static::repository();
+        }
+        return static::$config->get($path, $default);
     }
 
-    protected function repository(): Repository
+    protected static function repository(): Repository
     {
-        $files = $this->getConfigurationFiles();
         $repository = new Repository([]);
-        foreach ($files as $key => $path) {
+        foreach (File::files(self::DIR_URI) as $file) {
+            $key = strtolower(basename($file->getRealPath(), '.php'));
+            $path = $file->getRealPath();
             $repository->set($key, require $path);
         }
         return $repository;
-    }
-
-    protected function getConfigurationFiles(): array
-    {
-        $files = [];
-        $configPath = app()->basePath('/app/Services/Algolia/config');
-        foreach (Finder::create()->files()->name('*.php')->in($configPath) as $file) {
-            $files[basename($file->getRealPath(), '.php')] = $file->getRealPath();
-        }
-        ksort($files, SORT_NATURAL);
-        return $files;
     }
 }

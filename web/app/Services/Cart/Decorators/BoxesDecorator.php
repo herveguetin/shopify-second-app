@@ -5,19 +5,19 @@
 
 namespace App\Services\Cart\Decorators;
 
+use Skafer\Decorator\DecoratorAbstract;
 use stdClass;
 
-class BoxesDecorator implements DecoratorInterface
+class BoxesDecorator extends DecoratorAbstract
 {
 
     private stdClass $cart;
 
-    public function decorate(stdClass $cart): stdClass
+    protected function decorateObject(mixed &$cart)
     {
-        $this->cart = $cart;
+        $this->cart = &$cart;
         $this->updateCartLines();
         $this->updateTotals();
-        return $this->cart;
     }
 
     private function updateCartLines(): void

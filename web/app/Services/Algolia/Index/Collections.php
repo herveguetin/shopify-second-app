@@ -7,5 +7,5 @@ namespace App\Services\Algolia\Index;
 
 class Collections extends IndexBuilder
 {
-    protected const INDEX_CODE = 'collections';
+    public const INDEX_CODE = 'collections';
 }

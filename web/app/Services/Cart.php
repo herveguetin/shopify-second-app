@@ -5,18 +5,13 @@
 
 namespace App\Services;
 
-use App\Services\Cart\Decorators\DecoratorInterface;
-use App\Services\Cart\Decorators\BoxesDecorator;
-use Exception;
+use Skafer\Decorator\DecoratorInterface;
+use Skafer\Decorator\DecoratorRepository;
 use StdClass;
 
 class Cart
 {
     private StdClass $cart;
-
-    private array $decorators = [
-        BoxesDecorator::class
-    ];
 
     public function update(array $cart): array
     {
@@ -27,21 +22,9 @@ class Cart
 
     private function decorate(): void
     {
-        array_map(function (string $decoratorClassName) {
-            /** @var DecoratorInterface $decoratorInstance */
-            $decoratorInstance = new $decoratorClassName();
-            $this->assertDecoratorInstance($decoratorInstance);
-            $this->cart = $decoratorInstance->decorate($this->cart);
-        }, $this->decorators);
-    }
-
-    private function assertDecoratorInstance($decoratorInstance): void
-    {
-        if (!$decoratorInstance instanceof DecoratorInterface) {
-            throw new Exception(sprintf(
-                '%s must implement \App\Services\Cart\Decorators\DecoratorInterface',
-                get_class($decoratorInstance)
-            ));
-        }
+        array_map(function (DecoratorInterface $decorator) {
+            $objects = [$this->cart];
+            $decorator->decorate($objects);
+        }, DecoratorRepository::all('Cart\Decorators'));
     }
 }

@@ -14,7 +14,7 @@ use Exception;
 
 class IndexBuilder implements IndexInterface
 {
-    protected const INDEX_CODE = '';
+    public const INDEX_CODE = '';
 
     public function reindex(): void
     {
