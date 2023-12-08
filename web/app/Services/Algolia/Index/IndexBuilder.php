@@ -10,9 +10,16 @@ use App\Services\Algolia\Indexers\IndexerRepository;
 use App\Services\Algolia\Settings\Setup;
 use Exception;
 
-class IndexAbstract implements IndexInterface
+class IndexBuilder implements IndexInterface
 {
-    public const INDEX_CODE = '';
+    private ?string $indexCode;
+
+    public function __construct(
+        string $indexCode
+    )
+    {
+        $this->indexCode = $indexCode;
+    }
 
     public function reindex(): void
     {
@@ -26,16 +33,16 @@ class IndexAbstract implements IndexInterface
     {
         $allIndexers = IndexerRepository::all();
         return array_filter($allIndexers, function (IndexerInterface $indexer) {
-            return $indexer::INDEX_CODE === $this->code();
+            return $indexer->code() === $this->code();
         });
     }
 
     public function code(): string
     {
-        if (static::INDEX_CODE === '') {
+        if (is_null($this->indexCode)) {
             throw new Exception('Please define an index code.');
         }
-        return static::INDEX_CODE;
+        return $this->indexCode;
     }
 
     public function setup(): void

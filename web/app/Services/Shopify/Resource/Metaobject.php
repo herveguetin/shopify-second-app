@@ -50,7 +50,7 @@ class Metaobject
 
     private function fromId(): array
     {
-        return ['metaoobject' => 'test'];
+        return ['metaobject' => 'test'];
     }
 
     /**

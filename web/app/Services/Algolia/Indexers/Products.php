@@ -5,62 +5,33 @@
 
 namespace App\Services\Algolia\Indexers;
 
-use App\Services\Shopify\Resource\Metafield;
-use App\Services\Shopify\Rest\Collections as ShopifyCollections;
-use Shopify\Rest\Base;
-
-class Products extends IndexerAbstract
+/**
+ * @method code()
+ * @method reindex()
+ * @method truncate()
+ * @method sample()
+ */
+class Products implements IndexerInterface
 {
-    public const INDEX_CODE = 'products';
-    protected const API_PATH = 'products.json';
-    protected const API_OBJECTS_RESPONSE_KEY = 'products';
-    private array $collections = [];
+    private const INDEX_CODE = 'products';
+    private const API_PATH = 'products.json';
+    private const API_OBJECTS_RESPONSE_KEY = 'products';
+    private const DECORATOR_NAMESPACE = 'Algolia\Indexers\Products\Decorators';
+    private IndexerBuilder $indexer;
 
-    protected function requestObjects(): void
+    public function __construct()
     {
-        parent::requestObjects();
-        $this->collections = ShopifyCollections::all();
-        $this->addCollections();
-        $this->addMetafields();
+        $this->indexer = new IndexerBuilder(
+            self::INDEX_CODE,
+            self::API_PATH,
+            self::API_OBJECTS_RESPONSE_KEY,
+            self::DECORATOR_NAMESPACE
+        );
     }
 
-    private function addCollections(): void
+    public function __call(string $name, array $arguments)
     {
-        $newObjects = array_map(function ($product) {
-            return $this->addCollectionsOfProduct($product);
-        }, $this->objects);
-        $this->objects = $newObjects;
-    }
-
-    private function addCollectionsOfProduct(mixed $product): array
-    {
-        $collections = array_filter($this->collections, function ($collection) use ($product) {
-            return in_array($product['id'], $collection['products']);
-        });
-        $product['collections'] = array_values(array_map(function ($collection) {
-            return $collection['id'];
-        }, $collections));
-        return $product;
-    }
-
-    private function addMetafields(): void
-    {
-        $newObjects = array_map(function ($product) {
-            return $this->addMetafieldsOfProduct($product);
-        }, $this->objects);
-        $this->objects = $newObjects;
-    }
-
-    private function addMetafieldsOfProduct(mixed $product): array
-    {
-        $product['metafields'] = array_map(function (Base $metafield) {
-            $metafieldArr = $metafield->toArray();
-            if ($metaobject = Metafield::metaobject($metafieldArr)) {
-                $metafieldArr['value'] = $metaobject;
-            }
-            return $metafieldArr;
-        }, Metafield::all($product['id'], 'product'));
-        return $product;
+        return $this->indexer->$name($arguments);
     }
 }
 

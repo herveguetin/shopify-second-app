@@ -11,7 +11,10 @@ return [
     Products::INDEX_CODE => [
         'settings' => [
             'parameters' => [
-                'attributesForFaceting' => ['collections']
+                'attributesForFaceting' => [
+                    'filterOnly(collections)',
+                    'collections'
+                ]
             ]
         ]
     ],

@@ -5,7 +5,7 @@
 
 namespace App\Services\Algolia\Framework\Repository;
 
-use Exception;
+use App\Services\Algolia\Framework\Exceptions\WrongInterfaceException;
 
 class Repository implements RepositoryInterface
 {
@@ -28,7 +28,7 @@ class Repository implements RepositoryInterface
         $this->instances = array_map(function ($className) {
             $instance = new $className();
             if (!is_subclass_of($instance, $this->interface)) {
-                throw new Exception(sprintf('%s must implement %s', $className, $this->interface));
+                throw new WrongInterfaceException($instance, $this->interface);
             }
             return $instance;
         }, $this->instanceNames);
