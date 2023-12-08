@@ -5,6 +5,8 @@
 
 namespace App\Services\Algolia\Index;
 
+use Algolia\AlgoliaSearch\SearchIndex;
+use App\Services\Algolia\App\Client;
 use App\Services\Algolia\Indexers\IndexerInterface;
 use App\Services\Algolia\Indexers\IndexerRepository;
 use App\Services\Algolia\Settings\Setup;
@@ -12,14 +14,7 @@ use Exception;
 
 class IndexBuilder implements IndexInterface
 {
-    private ?string $indexCode;
-
-    public function __construct(
-        string $indexCode
-    )
-    {
-        $this->indexCode = $indexCode;
-    }
+    protected const INDEX_CODE = '';
 
     public function reindex(): void
     {
@@ -39,14 +34,31 @@ class IndexBuilder implements IndexInterface
 
     public function code(): string
     {
-        if (is_null($this->indexCode)) {
+        if (static::INDEX_CODE === '') {
             throw new Exception('Please define an index code.');
         }
-        return $this->indexCode;
+        return static::INDEX_CODE;
     }
 
     public function setup(): void
     {
         Setup::push($this);
+    }
+
+    public function sample(): array
+    {
+        return $this->algolia()->browseObjects()->current();
+    }
+
+    public function algolia(): SearchIndex
+    {
+        /** @var Client $client */
+        $client = app()->make(Client::class);
+        return $client->open()->initIndex(env('ALGOLIA_INDEX_PREFIX') . $this->code());
+    }
+
+    public function truncate(): void
+    {
+        $this->algolia()->clearObjects();
     }
 }

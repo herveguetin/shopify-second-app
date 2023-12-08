@@ -3,11 +3,11 @@
  * @author Hervé Guétin <www.linkedin.com/in/herveguetin>
  */
 
-namespace App\Services\Algolia\Framework\Repository;
+namespace Skafer\Repository;
 
-use App\Services\Algolia\Framework\Exceptions\WrongInterfaceException;
+use Skafer\Exceptions\WrongInterfaceException;
 
-class Repository implements RepositoryInterface
+class Repository
 {
     private array $instanceNames = [];
     private mixed $interface = null;
@@ -25,17 +25,22 @@ class Repository implements RepositoryInterface
 
     private function makeInstances()
     {
-        $this->instances = array_map(function ($className) {
+        array_map(function ($className) {
             $instance = new $className();
             if (!is_subclass_of($instance, $this->interface)) {
                 throw new WrongInterfaceException($instance, $this->interface);
             }
-            return $instance;
+            $this->instances[$className] = $instance;
         }, $this->instanceNames);
     }
 
     public function all(): array
     {
         return $this->instances;
+    }
+
+    public function get($key): mixed
+    {
+        return $this->instances[$key];
     }
 }

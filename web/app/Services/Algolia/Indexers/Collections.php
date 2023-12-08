@@ -5,30 +5,16 @@
 
 namespace App\Services\Algolia\Indexers;
 
-use App\Services\Shopify\Rest;
+use App\Services\Shopify\Rest\Collections as ShopifyCollections;
 
-/**
- * @method code()
- * @method reindex()
- * @method truncate()
- * @method sample()
- */
-class Collections implements IndexerInterface
+class Collections extends IndexerBuilder
 {
     public const INDEX_CODE = 'collections';
 
-    private IndexerBuilder $indexer;
-
     public function __construct()
     {
-        $this->indexer = new IndexerBuilder(self::INDEX_CODE);
-        $this->indexer->useRequestClosure(function () {
-            Rest\Collections::all();
+        $this->useRequestClosure(function () {
+            return ShopifyCollections::all();
         });
-    }
-
-    public function __call(string $name, array $arguments)
-    {
-        return $this->indexer->$name($arguments);
     }
 }

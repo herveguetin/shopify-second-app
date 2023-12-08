@@ -8,7 +8,7 @@ use App\Lib\Handlers\Privacy\CustomersDataRequest;
 use App\Lib\Handlers\Privacy\CustomersRedact;
 use App\Lib\Handlers\Privacy\ShopRedact;
 use App\Services\Algolia;
-use App\Services\Algolia\Framework\Client as AlgoliaClient;
+use App\Services\Algolia\App\Client as AlgoliaClient;
 use App\Services\Cart;
 use App\Services\Shopify\Config;
 use Illuminate\Support\Facades\URL;
@@ -28,15 +28,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('cart', function () {
-            return new Cart();
-        });
-        $this->app->bind('algolia', function () {
-            return new Algolia();
-        });
-        $this->app->singleton(AlgoliaClient::class, function () {
-            return new AlgoliaClient();
-        });
+        //
     }
 
     /**
@@ -47,7 +39,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Config::load();
         $this->bootShopify();
     }
 

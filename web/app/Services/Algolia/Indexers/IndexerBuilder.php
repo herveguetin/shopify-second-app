@@ -5,98 +5,74 @@
 
 namespace App\Services\Algolia\Indexers;
 
-use Algolia\AlgoliaSearch\SearchIndex;
-use App\Services\Algolia\Framework\Decorator\DecoratorInterface;
-use App\Services\Algolia\Framework\Decorator\DecoratorRepository;
-use App\Services\Algolia\Framework\Index;
+use App\Services\Algolia\App\Cache;
+use App\Services\Algolia\Index\IndexInterface;
+use App\Services\Algolia\Index\IndexRepository;
 use App\Services\Algolia\Indexers\Queue\Job;
 use App\Services\Algolia\Indexers\Queue\JobConfig;
 use App\Services\Shopify\Rest;
 use Closure;
 use Exception;
+use Skafer\Decorator\DecoratorInterface;
+use Skafer\Decorator\DecoratorRepository;
 
 class IndexerBuilder implements IndexerInterface
 {
-    private ?string $indexCode;
-    private string $apiPath;
-    private string $apiObjectsResponseKey;
-    private SearchIndex $index;
+    protected const INDEX_CODE = '';
+    protected const API_PATH = '';
+    protected const API_OBJECTS_RESPONSE_KEY = '';
+    protected const DECORATOR_NAMESPACE = '';
+
     private ?array $objects = [];
-    private bool $canClear = true;
-    private string $decoratorNamespace;
-    private ?Closure $objectsRequestClosure;
+    private ?Closure $objectsRequestClosure = null;
 
-    public function __construct(
-        string $indexCode,
-        string $apiPath = '',
-        string $apiObjectsResponseKey = '',
-        string $decoratorNamespace = ''
-    )
-    {
-        $this->indexCode = $indexCode;
-        $this->apiPath = $apiPath;
-        $this->apiObjectsResponseKey = $apiObjectsResponseKey;
-        $this->decoratorNamespace = $decoratorNamespace;
-    }
-
-    public function useRequestClosure(Closure $objectsRequestClosure)
+    protected function useRequestClosure(Closure $objectsRequestClosure)
     {
         $this->objectsRequestClosure = $objectsRequestClosure;
     }
 
     public function reindex(): void
     {
-        $this->truncate();
+        $this->index()->algolia()->clearObjects();
         $this->requestObjects();
         $this->decorateObjects();
         $this->indexObjects();
     }
 
-    public function truncate(): void
+    public function index(): IndexInterface
     {
-        if ($this->canClear()) {
-            $this->index()->clearObjects();
-        }
-    }
-
-    public function canClear(?bool $flag = null): bool
-    {
-        if (!is_null($flag)) {
-            $this->canClear = $flag;
-        }
-        return $this->canClear;
-    }
-
-    protected function index(): SearchIndex
-    {
-        return Index::use($this->code());
+        return IndexRepository::get($this->code());
     }
 
     public function code(): string
     {
-        if (is_null($this->indexCode)) {
+        if (static::INDEX_CODE === '') {
             throw new Exception('Please define an index code.');
         }
-        return $this->indexCode;
+        return static::INDEX_CODE;
     }
 
-    protected function requestObjects(): void
+    private function requestObjects(): void
     {
-        $this->objects = $this->objectsRequestClosure
-            ? call_user_func($this->objectsRequestClosure)
-            : (new Rest($this->apiPath))->objects($this->apiObjectsResponseKey);
+        if (!Cache::has($this->cacheKey())) {
+            $this->objects = $this->objectsRequestClosure
+                ? call_user_func($this->objectsRequestClosure)
+                : (new Rest(static::API_PATH))->objects(static::API_OBJECTS_RESPONSE_KEY);
+            Cache::put($this->cacheKey(), $this->objects);
+        }
+        $this->objects = Cache::get($this->cacheKey());
     }
 
     private function decorateObjects()
     {
-        if ($this->decoratorNamespace !== '') {
+        if (static::DECORATOR_NAMESPACE !== '') {
             array_map(function (DecoratorInterface $decorator) {
                 $decorator->decorate($this->objects);
-            }, DecoratorRepository::all($this->decoratorNamespace, DecoratorInterface::class));
+            }, DecoratorRepository::all(static::DECORATOR_NAMESPACE, DecoratorInterface::class));
         }
     }
 
-    protected function indexObjects(): void
+    private function indexObjects(): void
     {
         foreach ($this->objects as $object) {
             Job::dispatch(JobConfig::encode([
@@ -106,8 +82,8 @@ class IndexerBuilder implements IndexerInterface
         }
     }
 
-    public function sample(): array
+    private function cacheKey(): string
     {
-        return $this->index()->browseObjects()->current();
+        return $this->code() . '_objects';
     }
 }

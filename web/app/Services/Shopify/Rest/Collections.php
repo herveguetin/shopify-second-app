@@ -5,13 +5,19 @@
 
 namespace App\Services\Shopify\Rest;
 
+use App\Services\Algolia\App\Cache;
 use App\Services\Shopify\Rest;
 
 class Collections
 {
     public static function all(): array
     {
-        return static::requestObjects();
+        $cacheKey = 'shopify_collections';
+        if (!Cache::has($cacheKey)) {
+            $objects = static::requestObjects();
+            Cache::put($cacheKey, $objects);
+        }
+        return Cache::get($cacheKey);
     }
 
     protected static function requestObjects(): array

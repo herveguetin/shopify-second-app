@@ -5,7 +5,7 @@
 
 namespace App\Services\Algolia\Indexers\Products\Decorators;
 
-use App\Services\Algolia\Framework\Decorator\DecoratorAbstract;
+use Skafer\Decorator\DecoratorAbstract;
 use App\Services\Shopify\Rest\Collections as ShopifyCollections;
 
 class Collections extends DecoratorAbstract

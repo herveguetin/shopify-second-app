@@ -3,10 +3,10 @@
  * @author Hervé Guétin <www.linkedin.com/in/herveguetin>
  */
 
-namespace App\Services\Algolia\Framework\Decorator;
+namespace Skafer\Decorator;
 
-use App\Services\Algolia\Framework\Class\Loader;
-use App\Services\Algolia\Framework\Repository\RepositoryFactory;
+use Skafer\Repository\RepositoryFactory;
+use Skafer\Class\Loader;
 
 class DecoratorRepository
 {

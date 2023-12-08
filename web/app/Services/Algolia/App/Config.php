@@ -3,7 +3,7 @@
  * @author Hervé Guétin <www.linkedin.com/in/herveguetin>
  */
 
-namespace App\Services\Algolia\Framework;
+namespace App\Services\Algolia\App;
 
 use Illuminate\Config\Repository;
 use Symfony\Component\Finder\Finder;

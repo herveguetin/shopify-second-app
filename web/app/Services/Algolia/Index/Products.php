@@ -5,23 +5,7 @@
 
 namespace App\Services\Algolia\Index;
 
-/**
- * @method code()
- * @method setup()
- * @method reindex()
- */
-class Products implements IndexInterface
+class Products extends IndexBuilder
 {
-    public const INDEX_CODE = 'products';
-    private IndexBuilder $index;
-
-    public function __construct()
-    {
-        $this->index = new IndexBuilder(self::INDEX_CODE);
-    }
-
-    public function __call(string $name, array $arguments)
-    {
-        return $this->index->$name($arguments);
-    }
+    protected const INDEX_CODE = 'products';
 }

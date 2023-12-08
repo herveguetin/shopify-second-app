@@ -11,7 +11,7 @@ use Shopify\Clients\RestResponse;
 
 class Rest
 {
-    private const PAGE_SIZE = 5;
+    private const PAGE_SIZE = 50;
     private string $apiPath;
     private string $apiObjectsResponseKey = '';
     private ?Session $session = null;

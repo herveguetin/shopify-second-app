@@ -3,7 +3,7 @@
  * @author Hervé Guétin <www.linkedin.com/in/herveguetin>
  */
 
-namespace App\Services\Algolia\Framework\Class;
+namespace Skafer\Class;
 
 use Symfony\Component\Finder\Finder;
 

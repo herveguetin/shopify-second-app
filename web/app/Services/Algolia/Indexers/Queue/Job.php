@@ -2,7 +2,7 @@
 
 namespace App\Services\Algolia\Indexers\Queue;
 
-use App\Services\Algolia\Framework\Index;
+use App\Services\Algolia\Index\IndexRepository;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -35,7 +35,7 @@ class Job implements ShouldQueue
      */
     public function handle()
     {
-        $index = Index::use($this->config->indexer_code);
-        $index->saveObjects($this->config->objects, ['objectIDKey' => 'id'])->wait();
+        $index = IndexRepository::get($this->config->indexer_code);
+        $index->algolia()->saveObjects($this->config->objects, ['objectIDKey' => 'id'])->wait();
     }
 }

@@ -3,11 +3,11 @@
  * @author Hervé Guétin <www.linkedin.com/in/herveguetin>
  */
 
-namespace App\Services\Algolia\Framework\Repository;
+namespace Skafer\Repository;
 
 class RepositoryFactory
 {
-    public static function create(array $instances, $interface): RepositoryInterface
+    public static function create(array $instances, $interface): Repository
     {
         return new Repository($instances, $interface);
     }

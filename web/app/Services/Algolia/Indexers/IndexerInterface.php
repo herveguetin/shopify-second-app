@@ -9,6 +9,4 @@ interface IndexerInterface
 {
     public function code(): string;
     public function reindex(): void;
-    public function sample(): array;
-    public function truncate(): void;
 }
